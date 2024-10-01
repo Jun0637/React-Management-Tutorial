@@ -20,34 +20,24 @@ const styles = {
   },
 };
 
-const customers = [
-  {
-    id: 1,
-    image: 'https://screenchaser.kico.co.jp/wp-content/uploads/2024/07/ScreenCharser-800x285.png',
-    name: 'kico1',
-    birthday: '961111',
-    gender: 'man',
-    job: 'college',
-  },
-  {
-    id: 2,
-    image: 'https://screenchaser.kico.co.jp/wp-content/uploads/2024/07/ScreenCharser-800x285.png',
-    name: 'kico2',
-    birthday: '971111',
-    gender: 'woman',
-    job: 'college',
-  },
-  {
-    id: 3,
-    image: 'https://screenchaser.kico.co.jp/wp-content/uploads/2024/07/ScreenCharser-800x285.png',
-    name: 'kico3',
-    birthday: '981111',
-    gender: '?',
-    job: 'college',
-  },
-];
-
 class App extends Component {
+
+  state ={
+    customers:""
+  }
+
+  componentDidMount(){
+    this.callApi()
+    .then(res => this.setState({customers:res}))
+    .catch(err => console.log(err));
+  }
+
+  callApi = async () =>{
+    const response = await fetch(`api/customers`);
+    const body = await response.json();
+    return body;
+  }
+
   render() {
     const { classes } = this.props;
     return (
@@ -64,7 +54,7 @@ class App extends Component {
             </TableRow>
           </TableHead>
           <TableBody>
-            {customers.map(c => (
+            {this.state.customers ? this.state.customers.map(c => (
               <Customer
                 key={c.id}
                 id={c.id}
@@ -74,7 +64,7 @@ class App extends Component {
                 gender={c.gender}
                 job={c.job}
               />
-            ))}
+            )): ""}
           </TableBody>
         </Table>
       </Paper>
