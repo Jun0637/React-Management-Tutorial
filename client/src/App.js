@@ -7,6 +7,8 @@ import TableHead from '@mui/material/TableHead';
 import TableBody from '@mui/material/TableBody';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
+import CircularProgress from '@mui/material/CircularProgress';
+
 import { withStyles } from '@mui/styles';
 
 const styles = {
@@ -18,15 +20,19 @@ const styles = {
   table: {
     minWidth: 1080, 
   },
+  progress:{
+  }
 };
 
 class App extends Component {
 
   state ={
-    customers:""
+    customers:"",
+    completed: 0
   }
 
   componentDidMount(){
+    this.timer = setInterval(this.progress, 20);
     this.callApi()
     .then(res => this.setState({customers:res}))
     .catch(err => console.log(err));
@@ -38,6 +44,11 @@ class App extends Component {
     return body;
   }
 
+  progress = () =>{
+    const { completed } = this.state;
+    this.setState({ completed: completed >= 100 ? 0 : completed + 1});
+  }
+
   render() {
     const { classes } = this.props;
     return (
@@ -46,7 +57,7 @@ class App extends Component {
           <TableHead>
             <TableRow>
               <TableCell>番号</TableCell>
-              <TableCell>image</TableCell>
+              <TableCell>図</TableCell>
               <TableCell>名前</TableCell>
               <TableCell>誕生日</TableCell>
               <TableCell>性別</TableCell>
@@ -64,7 +75,13 @@ class App extends Component {
                 gender={c.gender}
                 job={c.job}
               />
-            )): ""}
+            )): 
+            <TableRow>
+              <TableCell colSpan="6" align="center">
+                <CircularProgress className={classes.progress} variant="determinate" value={this.state.completed}></CircularProgress>
+              </TableCell>
+            </TableRow>
+            }
           </TableBody>
         </Table>
       </Paper>
